@@ -23,9 +23,16 @@ class UserManager(models.Manager):
         if not postData['pass1'] == postData['pass2']:
             errors.append('Passwords must match.')
         return errors
-    # def validate_login(self, postData):
-    #
 
+    def check_email(self, postData):
+        emails = User.objects.filter(email=postData['email'])
+        # print(emails)
+        if emails:
+            return False
+        return True
+
+    def create_user(self, postData):
+        User.objects.create(first_name=postData['first_name'], last_name=postData['last_name'], email=postData['email'], password=postData['pass1'])
 
 class User(models.Model):
     first_name = models.CharField(max_length=30)

@@ -15,9 +15,20 @@ def register(request):
         for error in errors:
             messages.error(request, error)
         return redirect('/')
-    
-    return redirect('/success')
+
+    is_email = User.objects.check_email(request.POST)
+    # print(is_email)
+    if not is_email:
+        messages.error(request, 'Email already in use.')
+        return redirect('/')
+    user_data = User.objects.create_user(request.POST)
+
+    context = {
+        'emails': User.objects.all()
+    }
+    return render(request, 'login_reg/success.html', context)
 def login(request):
+
     return redirect('/success')
 
 def success(request):

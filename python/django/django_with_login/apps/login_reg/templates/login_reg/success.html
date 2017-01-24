@@ -6,5 +6,8 @@
   </head>
   <body>
     <h1>success</h1>
+    {% for email in emails %}
+      <p>{{email.email}}</p>
+    {% endfor %}
   </body>
 </html>
