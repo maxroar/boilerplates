@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import re
 from django.db import models
+import bcrypt
 from django.contrib import messages
 
 # Create your models here.
@@ -26,13 +27,26 @@ class UserManager(models.Manager):
 
     def check_email(self, postData):
         emails = User.objects.filter(email=postData['email'])
-        # print(emails)
+        print(emails[0].email)
         if emails:
             return False
         return True
 
     def create_user(self, postData):
-        User.objects.create(first_name=postData['first_name'], last_name=postData['last_name'], email=postData['email'], password=postData['pass1'])
+        User.objects.create(first_name=postData['first_name'], last_name=postData['last_name'], email=postData['email'], password=bcrypt.hashpw(postData['pass1'].encode(), bcrypt.gensalt()))
+
+    def login(self, postData):
+        user_data = User.objects.filter(email=postData['email']).first()
+        # print(user_obj)
+        pwhash = user_data.password.encode()
+        if pwhash == bcrypt.hashpw(postData['pass1'].encode(), pwhash):
+            return True
+        return False
+
+    def set_session(self, postData):
+        user_data = User.objects.filter(email=postData['email']).first()
+        user_id = user_data.id
+        return user_id
 
 class User(models.Model):
     first_name = models.CharField(max_length=30)
@@ -42,3 +56,6 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()
+
+    # def __getitem__(self, key):
+    #     return self.user[key]

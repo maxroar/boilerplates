@@ -6,8 +6,12 @@
   </head>
   <body>
     <h1>success</h1>
-    {% for email in emails %}
-      <p>{{email.email}}</p>
+    {% for msg in messages %}
+      <p>{{msg.message}}</p>
     {% endfor %}
+    {% for email in emails %}
+      <p>{{email.password}}</p>
+    {% endfor %}
+    {{request.session.user_id}}
   </body>
 </html>

@@ -5,7 +5,7 @@ from .models import User, UserManager
 # Create your views here.
 def index(request):
     if 'user_id' in request.session:
-        messages.add_message(resuest, messages.ERROR, 'You were already logged in, goof. If you would like to log into or register a new account, please log out first.')
+        messages.add_message(request, messages.ERROR, 'You were already logged in, goof. If you would like to log into or register a new account, please log out first.')
         print('logged in')
         return redirect('/success')
     return render(request, 'login_reg/index.html')
@@ -28,7 +28,16 @@ def register(request):
     }
     return render(request, 'login_reg/success.html', context)
 def login(request):
-
+    is_email = User.objects.check_email(request.POST)
+    if is_email:
+         messages.error(request, 'This email has not been registered.')
+         return redirect('/')
+    is_match = User.objects.login(request.POST)
+    if not is_match:
+        messages.error(request, 'The email or password is incorrect.')
+        return redirect('/')
+    request.session['user_id'] = User.objects.set_session(request.POST)
+    print(request.session['user_id'])
     return redirect('/success')
 
 def success(request):
