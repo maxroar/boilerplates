@@ -9,9 +9,13 @@
     {% for msg in messages %}
       <p>{{msg.message}}</p>
     {% endfor %}
-    {% for email in emails %}
-      <p>{{email.password}}</p>
-    {% endfor %}
-    {{request.session.user_id}}
+    ID: {{user.id}}
+    First Name: {{user.first_name}}
+    Last Name: {{user.last_name}}
+    Email: {{user.email}}
+    <form class="" action="/logout" method="post">
+      {% csrf_token %}
+      <input type="submit" name="" value="Log Out">
+    </form>
   </body>
 </html>

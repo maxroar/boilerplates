@@ -26,7 +26,8 @@ def register(request):
     context = {
         'emails': User.objects.all()
     }
-    return render(request, 'login_reg/success.html', context)
+    session['user_id'] = set_session(request.POST)
+    return redirect('/success')
 def login(request):
     is_email = User.objects.check_email(request.POST)
     if is_email:
@@ -37,11 +38,13 @@ def login(request):
         messages.error(request, 'The email or password is incorrect.')
         return redirect('/')
     request.session['user_id'] = User.objects.set_session(request.POST)
-    print(request.session['user_id'])
     return redirect('/success')
 
 def success(request):
-    return render(request, 'login_reg/success.html')
+    user = User.objects.get_user_data_from_session(request.session['user_id'])
+    print(user, user.first_name)
+    context = {'user': user}
+    return render(request, 'login_reg/success.html', context)
 def logout(request):
     request.session.flush()
     return redirect('/')

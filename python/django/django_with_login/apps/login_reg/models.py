@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import re
 from django.db import models
 import bcrypt
-from django.contrib import messages
 
 # Create your models here.
 class UserManager(models.Manager):
@@ -10,7 +9,7 @@ class UserManager(models.Manager):
         # regex patters
         REGEX_NAME = re.compile(r'^([a-zA-Z]){2,55}$')
         REGEX_EMAIL = re.compile(r'^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$')
-        REGEX_PASS = re.compile(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$')
+        REGEX_PASS = re.compile(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,20}$')
         # list to hold error messages
         errors = []
         if not REGEX_NAME.match(postData['first_name']):
@@ -47,6 +46,11 @@ class UserManager(models.Manager):
         user_data = User.objects.filter(email=postData['email']).first()
         user_id = user_data.id
         return user_id
+        
+    def get_user_data_from_session(self, session_id):
+        user_data = User.objects.filter(id=session_id).first()
+        print(user_data)
+        return user_data
 
 class User(models.Model):
     first_name = models.CharField(max_length=30)
